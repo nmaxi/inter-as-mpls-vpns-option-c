@@ -1,0 +1,171 @@
+!! IOS XR Configuration 6.1.3
+!! Last configuration change at Mon Nov 25 15:50:47 2019 by nmaxi
+!
+hostname SP1-PE12
+domain lookup disable
+vrf CustA
+ address-family ipv4 unicast
+  import route-target
+   10.255.1.11:3001
+   10.255.2.11:3001
+   10.255.2.12:3001
+  !
+  export route-target
+   10.255.1.12:3001
+  !
+ !
+!
+vrf CustD
+ address-family ipv4 unicast
+  import route-target
+   10.255.2.12:3004
+  !
+  export route-target
+   10.255.1.12:3004
+  !
+ !
+!
+line console
+ exec-timeout 0 0
+!
+interface Loopback0
+ no shutdown
+ ipv4 address 10.255.1.12 255.255.255.255
+!
+interface MgmtEth0/0/CPU0/0
+ no shutdown
+ shutdown
+!
+interface GigabitEthernet0/0/0/0
+ no shutdown
+ shutdown
+!
+interface GigabitEthernet0/0/0/1
+ no shutdown
+ shutdown
+!
+interface GigabitEthernet0/0/0/2
+ no shutdown
+ ipv4 address 10.2.12.12 255.255.255.0
+!
+interface GigabitEthernet0/0/0/3
+ no shutdown
+ vrf CustA
+ ipv4 address 192.168.102.12 255.255.255.0
+!
+interface GigabitEthernet0/0/0/4
+ no shutdown
+ vrf CustD
+ ipv4 address 10.40.40.12 255.255.255.0
+!
+interface GigabitEthernet0/0/0/5
+ no shutdown
+ shutdown
+!
+interface GigabitEthernet0/0/0/6
+ no shutdown
+ shutdown
+!
+route-policy PASS_ALL
+  pass
+end-policy
+!
+router isis 1000
+ is-type level-2-only
+ net 00.0000.0000.0012.00
+ log adjacency changes
+ address-family ipv4 unicast
+  advertise passive-only
+  mpls ldp auto-config
+ !
+ interface Loopback0
+  passive
+  address-family ipv4 unicast
+  !
+ !
+ interface GigabitEthernet0/0/0/2
+  address-family ipv4 unicast
+  !
+ !
+!
+router ospf 1
+ address-family ipv4 unicast
+ vrf CustA
+  domain-id type 0005 value 000000000001
+  redistribute bgp 1000
+  address-family ipv4 unicast
+  area 0
+   interface GigabitEthernet0/0/0/3
+   !
+  !
+ !
+!
+router bgp 1000
+ address-family vpnv4 unicast
+ !
+ neighbor 10.255.1.55
+  remote-as 1000
+  update-source Loopback0
+  address-family vpnv4 unicast
+  !
+ !
+ vrf CustA
+  rd 3000:1
+  address-family ipv4 unicast
+   redistribute ospf 1 match internal external
+  !
+ !
+ vrf CustD
+  rd 3000:4
+  address-family ipv4 unicast
+  !
+  neighbor 10.40.40.1
+   remote-as 65004
+   address-family ipv4 unicast
+    route-policy PASS_ALL in
+    route-policy PASS_ALL out
+   !
+  !
+ !
+!
+mpls ldp
+ log
+  hello-adjacency
+  neighbor
+ !
+ router-id 10.255.1.12
+!
+mpls label range table 0 912000 912999
+!
+banner exec ^C
+***********************************************************************************
+* Inter-AS MPLS VPNs (VPLS, VPWS, L3VPN), using Option C                          *
+* Copyright (C) 2019  Navid Yahyapour (NMAXi)                                     *
+* This configuration file is free: you can redistribute it and/or modify it.      *
+* This config file is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; Without even the implied warranty of MERCHANTABILITY or FITNESS   *
+* FOR A PARTICULAR PURPOSE. (The same as GNU General Public License!)             * 
+* My LinkedIn profile:  <https://www.linkedin.com/in/navid-yahyapour/>.           *
+***********************************************************************************^C
+banner incoming ^C
+***********************************************************************************
+* Inter-AS MPLS VPNs (VPLS, VPWS, L3VPN), using Option C                          *
+* Copyright (C) 2019  Navid Yahyapour (NMAXi)                                     *
+* This configuration file is free: you can redistribute it and/or modify it.      *
+* This config file is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; Without even the implied warranty of MERCHANTABILITY or FITNESS   *
+* FOR A PARTICULAR PURPOSE. (The same as GNU General Public License!)             * 
+* My LinkedIn profile:  <https://www.linkedin.com/in/navid-yahyapour/>.           *
+***********************************************************************************^C
+banner login ^C
+***********************************************************************************
+* Inter-AS MPLS VPNs (VPLS, VPWS, L3VPN), using Option C                          *
+* Copyright (C) 2019  Navid Yahyapour (NMAXi)                                     *
+* This configuration file is free: you can redistribute it and/or modify it.      *
+* This config file is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; Without even the implied warranty of MERCHANTABILITY or FITNESS   *
+* FOR A PARTICULAR PURPOSE. (The same as GNU General Public License!)             * 
+* My LinkedIn profile:  <https://www.linkedin.com/in/navid-yahyapour/>.           *
+***********************************************************************************^C
+!
+end

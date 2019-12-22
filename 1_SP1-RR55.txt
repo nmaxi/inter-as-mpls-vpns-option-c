@@ -1,0 +1,277 @@
+!
+! Last configuration change at 16:24:10 UTC Thu Nov 28 2019
+!
+version 16.3
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+platform console serial
+!
+hostname SP1-RR55
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+no ip icmp rate-limit unreachable
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+!
+!
+!
+login on-success log
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+!
+mpls label range 155000 155999
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-1063753061
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1063753061
+ revocation-check none
+ rsakeypair TP-self-signed-1063753061
+!
+!
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+! 
+! 
+! 
+! 
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 10.255.1.55 255.255.255.255
+!
+interface GigabitEthernet1
+ no shutdown
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ no shutdown
+ ip address 10.3.55.55 255.255.255.0
+ ip router isis 1000
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ no shutdown
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet4
+ no shutdown
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet5
+ no shutdown
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet6
+ no shutdown
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet7
+ no shutdown
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet8
+ no shutdown
+ no ip address
+ shutdown
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+router isis 1000
+ net 00.0000.0000.0055.00
+ is-type level-2-only
+ advertise passive-only
+ log-adjacency-changes all
+ passive-interface Loopback0
+ mpls ldp autoconfig
+!
+router bgp 1000
+ bgp log-neighbor-changes
+ no bgp default ipv4-unicast
+ neighbor 10.255.1.11 remote-as 1000
+ neighbor 10.255.1.11 update-source Loopback0
+ neighbor 10.255.1.12 remote-as 1000
+ neighbor 10.255.1.12 update-source Loopback0
+ neighbor 10.255.2.66 remote-as 2000
+ neighbor 10.255.2.66 ebgp-multihop 255
+ neighbor 10.255.2.66 update-source Loopback0
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 10.255.1.11 activate
+  neighbor 10.255.1.11 send-community extended
+  neighbor 10.255.1.11 route-reflector-client
+  neighbor 10.255.1.12 activate
+  neighbor 10.255.1.12 send-community extended
+  neighbor 10.255.1.12 route-reflector-client
+  neighbor 10.255.2.66 activate
+  neighbor 10.255.2.66 send-community extended
+  neighbor 10.255.2.66 next-hop-unchanged
+ exit-address-family
+ !
+ address-family l2vpn vpls
+  neighbor 10.255.1.11 activate
+  neighbor 10.255.1.11 send-community extended
+  neighbor 10.255.1.11 route-reflector-client
+  neighbor 10.255.1.11 suppress-signaling-protocol ldp
+  neighbor 10.255.2.66 activate
+  neighbor 10.255.2.66 send-community extended
+  neighbor 10.255.2.66 next-hop-unchanged
+  neighbor 10.255.2.66 suppress-signaling-protocol ldp
+ exit-address-family
+!
+!
+virtual-service csr_mgmt
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+!
+!
+!
+!
+!
+mpls ldp router-id Loopback0
+!
+!
+control-plane
+!
+ !
+ !
+ !
+ !
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ login
+!
+banner exec ^C
+***********************************************************************************
+* Inter-AS MPLS VPNs (VPLS, VPWS, L3VPN), using Option C                          *
+* Copyright (C) 2019  Navid Yahyapour (NMAXi)                                     *
+* This configuration file is free: you can redistribute it and/or modify it.      *
+* This config file is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; Without even the implied warranty of MERCHANTABILITY or FITNESS   *
+* FOR A PARTICULAR PURPOSE. (The same as GNU General Public License!)             * 
+* My LinkedIn profile:  <https://www.linkedin.com/in/navid-yahyapour/>.           *
+***********************************************************************************^C
+banner incoming ^C
+***********************************************************************************
+* Inter-AS MPLS VPNs (VPLS, VPWS, L3VPN), using Option C                          *
+* Copyright (C) 2019  Navid Yahyapour (NMAXi)                                     *
+* This configuration file is free: you can redistribute it and/or modify it.      *
+* This config file is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; Without even the implied warranty of MERCHANTABILITY or FITNESS   *
+* FOR A PARTICULAR PURPOSE. (The same as GNU General Public License!)             * 
+* My LinkedIn profile:  <https://www.linkedin.com/in/navid-yahyapour/>.           *
+***********************************************************************************^C
+banner login ^C
+***********************************************************************************
+* Inter-AS MPLS VPNs (VPLS, VPWS, L3VPN), using Option C                          *
+* Copyright (C) 2019  Navid Yahyapour (NMAXi)                                     *
+* This configuration file is free: you can redistribute it and/or modify it.      *
+* This config file is distributed in the hope that it will be useful, but WITHOUT *
+* ANY WARRANTY; Without even the implied warranty of MERCHANTABILITY or FITNESS   *
+* FOR A PARTICULAR PURPOSE. (The same as GNU General Public License!)             * 
+* My LinkedIn profile:  <https://www.linkedin.com/in/navid-yahyapour/>.           *
+***********************************************************************************^C
+wsma agent exec
+!
+wsma agent config
+!
+wsma agent filesys
+!
+wsma agent notify
+!
+!
+end
